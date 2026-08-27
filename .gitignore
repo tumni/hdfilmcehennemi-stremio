@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build
+dist/
+build/
+
+# Runtime data (decoder profiles, proxies cache)
+runtime/
+
+# Test/debug files
+test-*.js
+scrape-cats.js
+patch*.js
+iframeHtml.txt
+homepage.html
+movie-page.html
+genre-page.html
+cat-page.html
+search-page.html
+kategori-aksiyon.html

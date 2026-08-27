@@ -1,0 +1,24 @@
+{
+  "name": "hdfilmcehennemi-addon",
+  "version": "1.0.0",
+  "description": "HDFilmCehennemi video ve altyazı çekici - Stremio Addon",
+  "main": "addon.js",
+  "scripts": {
+    "start": "node addon.js",
+    "test": "node test.js",
+    "healthcheck": "node scripts/healthcheck.js",
+    "status": "node scripts/status.js"
+  },
+  "dependencies": {
+    "acorn": "^8.18.0",
+    "acorn-walk": "^8.3.5",
+    "archiver": "^8.0.0",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "socks-proxy-agent": "^8.0.5",
+    "ssh2": "^1.17.0",
+    "stremio-addon-sdk": "^1.6.10",
+    "undici": "^6.0.0"
+  }
+}
