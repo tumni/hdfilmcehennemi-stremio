@@ -1,54 +1,88 @@
-# bu proje artık maintain edilmeyecektir
+# HDFilmCehennemi Stremio Addon (Fork)
 
-# HDFilmCehennemi Stremio Addon
+> Bu proje **[enXov/hdfilmcehennemi-stremio](https://github.com/enXov/hdfilmcehennemi-stremio)** reposundan fork alınarak geliştirilmiştir.
 
 HDFilmCehennemi içeriklerini Stremio üzerinden izlemenizi sağlayan bir addon.
 
-maintain hakkında: hdfilmcehennemi 1 haftalık gözlemime göre her gün bazende günde 2 defa şifreleme algoritmasını değiştiriyor. Bunu çözmek için kodu güncelledim fakat farklı bir adım eklerse tekrardan güncellemek gerekecek. Kısacası kullanmadan önce 'node test' yazarsanız eğer orda şifrelenmiş bir şey yok ise sıkıntı yok demektir fakat var ise de issue açabilirsiniz çözmeye çalışırım, bu aralar çok fazla film/dizi izleyemiyorum her gün bakamıyorum maalesef.[Şu anki şifreleme](https://github.com/enXov/hdfilmcehennemi-stremio/blob/main/scraper.js#L390)
+---
+
+## 🆕 Bu Fork'ta Eklenenler
+
+Orijinal repoya kıyasla aşağıdaki iyileştirmeler yapılmıştır:
+
+- **🗂️ Keşfet Kataloğu:** Stremio'nun Discover (Keşfet) bölümüne "HDFilmCehennemi" seçeneği eklendi. Aksiyon, Korku, Komedi, Bilim Kurgu, Gerilim dahil 20+ kategori ile film/dizi filtreleme desteği.
+- **⚡ Direkt Stream (Hızlı):** Stremio Desktop'ta Nuvio benzeri hızda oynatım için `proxyHeaders` ile doğrudan CDN bağlantısı. Proxy üzerinden geçmediği için tam bant genişliği kullanılıyor.
+- **📡 Proxy Fallback:** Eski proxy yöntemi TV/uyumluluk seçeneği olarak korundu. Her film için iki stream seçeneği sunuluyor: 🚀 Direkt ve 📡 Proxy.
+- **🔧 VM Sandbox Decoder:** HDFilmCehennemi'nin `dc_XXXX([...])` tabanlı yeni şifreleme algoritması `vm.createContext()` sandbox'ı ile çözülüyor. Site şifrelemesini değiştirdiğinde otomatik yeniden analiz yapıyor.
+- **🔄 Stremio Uyumluluğu:** `notWebReady` bayrağı kaldırıldı, Stremio'nun kendi oynatıcısında çalışması sağlandı (artık yükleme ekranında takılmıyor).
+- **☁️ Koyeb/Railway Deploy:** Ücretsiz cloud platformlara deploy için `Dockerfile`, `railway.json` ve `Procfile` eklendi.
+
+---
+
+## ⚠️ Maintain Notu (orijinal repodan)
+
+HDFilmCehennemi 1 haftalık gözleme göre her gün, bazen günde 2 kez şifreleme algoritmasını değiştiriyor. Kullanmadan önce:
+
+```bash
+npm test
+```
+
+Eğer test başarılıysa sıkıntı yok. Hata alırsanız issue açabilirsiniz.
+
+---
 
 ## Özellikler
 
 - 🎬 Film ve dizi desteği
+- 🗂️ Keşfet kataloğu (20+ kategori)
 - 🎙️ Çoklu ses seçeneği (Türkçe dublaj, orijinal ses)
 - 📝 Altyazı desteği
+- ⚡ Çift stream modu (Direkt hızlı + Proxy uyumlu)
 - 🔄 Otomatik alternatif kaynak geçişi
+- 🔧 Otomatik şifre çözücü (VM sandbox)
+
+---
 
 ## Kurulum Seçenekleri
 
-### Seçenek 1: Kendi Sunucunuzda Çalıştırma
+### Seçenek 1: Koyeb (Ücretsiz Cloud — Önerilen)
 
-Bu addon'u kendi VPS/sunucunuzda çalıştırabilirsiniz. 
+Koyeb tamamen ücretsiz, uyumaya girmiyor ve HTTPS dahil geliyor.
 
-NOTLAR:
-Stremio sadece HTTPs kabul ediyor, yani bir domain veya reverse proxy şart.
-Eğer sunucunuz Türkiye dışında ise ki genellikle dışında olur o zaman normal proxy'e ihtiyacınız var. HDFilmCehennemi nedense erişimi Türkiye dışındaki ülkelere erişimi kısıtlamış(cloudflare). Fakat özellikle proxy belirlemenizi önermem çünkü şuanda public free http, socks4, socks5 proxy list kullanıyoruz Türkiye lokasyonlu.
+1. **[app.koyeb.com](https://app.koyeb.com)** adresine gidin → Google ile kayıt olun
+2. **"Create App"** → **"GitHub"** → bu repoyu seçin
+3. Ayarlar:
+   - **Region:** Frankfurt (EU)
+   - **Instance:** Nano (ücretsiz)
+   - **Port:** `7000`
+4. **Environment Variables:**
+   - `BASE_URL` → Deploy sonrası Koyeb'in verdiği URL (örn. `https://hdfilmcehennemi-xxx.koyeb.app`)
+5. Deploy edin, manifest URL'si: `https://xxx.koyeb.app/manifest.json`
 
-FREE PUBLIC PROXY LIST GÜVENİLİR Mİ??????: kişiden kişiye değişir fakat %99.99999 ihtimal ile güvenli, proxy sahibi sadece nereye istek attığınızı(hdfilmcehennemi) ve SUNUCUNUZUN IP adresini görüyor ve bazı başka gereksiz şeyleri de görüyor fakat görse bir şey olmaz çünkü atılan istek zaten HDFilmCehennemi sitesi bunu bilse bir şey olmaz. Sadece search/scraping için proxy kullanıyoruz, video url normal bir şekilde proxysiz oynatılıyor.
+> ⚠️ **Not:** Koyeb dışında Render, Glitch gibi servisler ya uyku moduna giriyor ya da proxy aramak için yeterince hızlı değil. Orijinal repodaki uyarılar burada da geçerli.
 
-EĞER LOCALHOST DA ÇALIŞTIRIYOR İSENİZ PROXY AKTİF OLMAYACAKTIR!
+---
 
-eğer plugin'i render.com gibi servisler ile çalıştırmayı denerseniz yaklaşık 3-4 dakika da bazen de hiç bir sonuç alamayabilirsiniz. Bu yüzden kendi sunucunuzda çalıştırmayı gözden geçirin. Şu an tüm proxy sourcelar merge edilip aynı anda 100 tanesi deneniyor bunu istemiyorsanız kodu inceleyip kendinize göre düzeltirsiniz. Şu anda free olarak toplam 80-85 tane var hepsi birleşince. Ben kendi sunucumda çalıştırdığım zaman 10 saniyeden küçük bir rakamda sonuç bulabiliyor yani demem o ki bunun için paralı bir proxy'e falan ihtiyaç yok.
+### Seçenek 2: Kendi Sunucunuzda (VPS)
 
-sunucunuzun nginx ayarlarından timeout ayarını arttırmak isteyebilirsiniz, free proxyler bazen kafayı yiyebiliyor xd burayı bi, ara düzenlemek lazım yazılar kötü gözüküyor xd
+Orijinal reponun VPS kurulum rehberini takip edin: [enXov/hdfilmcehennemi-stremio](https://github.com/enXov/hdfilmcehennemi-stremio)
 
-ben bu eklentiyi asıl olarak televizyondan izlemek için yapmıtşım. Fakat bu eklentiyi tv'den denediğiniz zaman nedense streamio android ve tv uygulaması tam olarak destek vermiyor, proxyHeaders ve bazı şeylere destek vermiyor. O yüzden tüm video url'yi yani direkt olarak tüm filmi veya bölümü sunucu proxysilenerek izleniyor.
+**Notlar:**
+- Stremio sadece HTTPS kabul ediyor — domain veya reverse proxy şart
+- Sunucu Türkiye dışındaysa otomatik free proxy devreye giriyor (HTTP/SOCKS4/SOCKS5)
+- Nginx timeout'u artırın: `proxy_read_timeout 120s;`
 
-### Seçenek 2: Yerel Olarak Çalıştırma
+---
+
+### Seçenek 3: Yerel Çalıştırma
 
 Bilgisayarınızda yerel olarak çalıştırabilirsiniz (sadece aynı ağdaki cihazlarda çalışır).
 
-## 💻 Yerel Kurulum
-
-### Gereksinimler
-
-- Node.js 18+
-- npm
-
-### Kurulum
+**Gereksinimler:** Node.js 18+, npm
 
 ```bash
 # Repoyu klonla
-git clone https://github.com/enXov/hdfilmcehennemi-stremio.git
+git clone https://github.com/tumni/hdfilmcehennemi-stremio.git
 cd hdfilmcehennemi-stremio
 
 # Bağımlılıkları yükle
@@ -58,7 +92,10 @@ npm install
 npm start
 ```
 
-Addon varsayılan olarak `http://localhost:7000` adresinde çalışır.
+Addon `http://localhost:7000` adresinde çalışır. Stremio'ya eklemek için:
+`http://localhost:7000/manifest.json`
+
+> **Not:** Localhost'ta proxy aktif olmayacaktır.
 
 ---
 
@@ -68,23 +105,18 @@ Addon varsayılan olarak `http://localhost:7000` adresinde çalışır.
 
 | Değişken | Varsayılan | Açıklama |
 |----------|------------|----------|
-| `PORT` | 7000 | Sunucu portu |
-| `BASE_URL` | http://localhost:7000 | Addon sunucusunun public URL'i (TV oynatımı için gerekli) |
-| `LOG_LEVEL` | info | Log seviyesi (debug, info, warn, error) |
-| `PROXY_ENABLED` | auto | Proxy modu: `auto` (gerektiğinde), `always` (her zaman), `never` (kapalı) |
+| `PORT` | `7000` | Sunucu portu |
+| `BASE_URL` | `http://localhost:7000` | Addon'un public URL'si (TV/proxy stream için şart) |
+| `LOG_LEVEL` | `info` | Log seviyesi: `debug`, `info`, `warn`, `error` |
+| `PROXY_ENABLED` | `auto` | Proxy modu: `auto`, `always`, `never` |
 
-### Örnek .env
+### Örnek `.env`
 
 ```env
 PORT=7000
-BASE_URL=http://localhost:7000
+BASE_URL=https://xxx.koyeb.app
 LOG_LEVEL=info
 PROXY_ENABLED=auto
-```
-
-Örnek kullanım:
-```bash
-PORT=8080 LOG_LEVEL=debug npm start
 ```
 
 ---
@@ -100,12 +132,17 @@ npm test
 ## 📁 Proje Yapısı
 
 ```
-├── addon.js      # Stremio addon sunucusu
-├── scraper.js    # Video/altyazı çekme modülü
-├── search.js     # İçerik arama ve eşleştirme
-├── logger.js     # Log sistemi
-├── errors.js     # Hata sınıfları
-├── test.js       # Test scripti
+├── addon.js          # Stremio addon sunucusu + proxy endpoint
+├── scraper.js        # Video/altyazı çekme + VM sandbox decoder
+├── catalog.js        # Keşfet kataloğu (Cinemeta proxy)
+├── search.js         # İçerik arama ve eşleştirme
+├── decoder/
+│   ├── analyzer.js   # Şifreleme analiz motoru (AST)
+│   └── engine.js     # Decoder pipeline yönetimi
+├── logger.js         # Log sistemi
+├── errors.js         # Hata sınıfları
+├── proxy.js          # Free proxy yönetimi
+├── test.js           # Test scripti
 └── package.json
 ```
 
